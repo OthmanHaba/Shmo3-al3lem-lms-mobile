@@ -1,136 +1,97 @@
-import { View, Text, Image, FlatList, TouchableOpacity, Dimensions } from "react-native";
-import React, { useState } from 'react';
-import { SafeAreaView } from "react-native-safe-area-context";
-import HeaderComponent from "../../components/HeaderItems";
-import { AntDesign } from "@expo/vector-icons";
-import { ScrollView } from "react-native";
-import CourseVerticalCard from "../../components/CourseVerticalCard";
+import React, { useState, useCallback } from 'react';
+import { View, Text, Image, FlatList, TouchableOpacity, Dimensions, RefreshControl } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AntDesign } from '@expo/vector-icons';
+import HeaderComponent from '../../components/HeaderItems';
+import CourseVerticalCard from '../../components/CourseVerticalCard';
+import SectionHeader from '../../components/SectionHeader'
+import CategoryItem from '../../components/CategoryItem';
+import FeaturedCourseCard from '../../components/FeaturedCourseCard';
+import TeacherItem from '../../components/TeacherItem';
+
+
 
 export default function TabOneScreen() {
-    const user = 'othman';
-    const width = Dimensions.get('window').width;
+    const [refreshing, setRefreshing] = useState(false);
+    const course = {
+        title: "رياضة 2- (نصفي)",
+        author: "بواسطة محمد احمد",
+        rating: "4.6",
+        duration: "4 ساعات و 30 دقيقة",
+        price: "24",
+        image: "https://example.com/course-image.jpg"
+    };
+    
+    const promotions = [
+        { id: 1, image: "https://example.com/promotion1.jpg" },
+        { id: 2, image: "https://example.com/promotion2.jpg" },
+    ];
+    
+    const categories = ['الرياضيات', 'العلوم', 'اللغة العربية', 'التاريخ', 'الجغرافيا'];
+    const featuredCourses = [
+        { id: 1, title: 'الرياضيات المتقدمة', user: 'د. أحمد', userImage: 'https://example.com/user1.jpg', price: 99, rating: 4.5, duration: '٥ ساعات', image: 'https://example.com/math.jpg' },
+        { id: 2, title: 'الفيزياء الحديثة', user: 'د. سارة', userImage: 'https://example.com/user2.jpg', price: 89, rating: 4.2, duration: '٤ ساعات', image: 'https://example.com/physics.jpg' },
+        { id: 3, title: 'الأدب العربي', user: 'أ. محمد', userImage: 'https://example.com/user3.jpg', price: 79, rating: 4.7, duration: '٦ ساعات', image: 'https://example.com/literature.jpg' },
+    ];
+    const teachers = [
+        { id: 1, name: 'د. حميدا', image: 'https://example.com/teacher1.jpg' },
+        { id: 2, name: 'أ. محمد', image: 'https://example.com/teacher2.jpg' },
+        { id: 3, name: 'د. فاطمة', image: 'https://example.com/teacher3.jpg' },
+    ];
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        // Fetch data on here
+        setTimeout(() => setRefreshing(false), 2000);
+    }, []);
+
     return (
-        <SafeAreaView className="flex-1 bg-whtie">
-            <ScrollView>
-                <HeaderComponent />
-                <View className="flex flex-row mx-2 justify-between items-center">
-                    <TouchableOpacity>
-                        <Text className="text-xl text-yellow-500">عرض الكل</Text>
-                    </TouchableOpacity>
-                    <Text className="text-xl ">الفئات</Text>
-
-                </View>
-                <View>
-                    <FlatList
-                        data={[...new Array(3).keys()]}
-                        renderItem={() => (
-                            <TouchableOpacity>
-                                <View className="border flex flex-row gap-1 px-2 py-1 bg-white rounded-2xl m-2 shadow-xl w-fit ">
-                                    <AntDesign name="shoppingcart" size={24} color="black" />
-                                    <Text>category</Text>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                        horizontal
-                    />
-                </View>
-                <View>
-                    <View className="flex flex-row mx-2 justify-between items-center mt-6">
-                        <TouchableOpacity>
-                            <Text className="text-xl text-yellow-500">عرض الكل</Text>
-                        </TouchableOpacity>
-                        <Text className="text-xl">الدورات التدريبية المتميزة</Text>
-                    </View>
-                    <FlatList
-                        data={[...new Array(3).keys()]}
-
-                        renderItem={() => (
-                            <View className="p-4 mt-4 rounded-xl bg-white mx-2">
-                                <Image
-                                    className="w-full rounded-xl h-40 "
-                                    source={require('../../assets/images/Promotion Card.png')}
-                                />
-                                <View className="flex flex-row justify-between -mt-16">
-                                    <View className=" flex flex-row  items-center bg-white w-20 rounded-2xl">
-                                        <Image
-                                            className="w-8 h-8 rounded-2xl mr-1"
-                                            source={{
-                                                uri: 'https://reactnative.dev/img/tiny_logo.png'
-                                            }}
-                                        />
-                                        <Text className="text-xs">by user</Text>
-                                    </View>
-
-                                    <View className="bg-red-500 px-2 flex justify-center items-center rounded-2xl">
-                                        <Text className="text-xs text-white">99 دل</Text>
-                                    </View>
-                                </View>
-                                <View className="mt-3">
-                                    <View>
-                                        <Text className="text-xl font-bold">رياضة 1</Text>
-                                    </View>
-                                    <View className="flex flex-row justify-between gap-3">
-                                        <View className="flex flex-row gap-1">
-                                            <AntDesign name="staro" size={16} color="black" />
-                                            <Text className="text-xs">4.5</Text>
-                                        </View>
-                                        <View className="flex flex-row gap-1">
-                                            <AntDesign name="clockcircleo" size={16} color="black" />
-                                            <Text className="text-xs">خمس ساعات و ثلاثين دقيقة</Text>
-                                        </View>
-                                    </View>
-                                </View>
-                            </View>
-                        )}
-                        horizontal
-                    />
-                </View>
-                <View>
-                    <View className="flex flex-row mx-2 justify-between items-center mt-6">
-                        <TouchableOpacity>
-                            <Text className="text-xl text-yellow-500">عرض الكل</Text>
-                        </TouchableOpacity>
-                        <Text className="text-xl">الاساتذة المتميزين</Text>
-                    </View>
-                    <FlatList
-                        data={[...new Array(3).keys()]}
-
-                        renderItem={() => (
-                            <View className="mt-3 mx-3 flex items-center ">
-                                <View
-                                    className="w-16 h-16 rounded-full border items-center justify-center"
-                                >
-                                    <Image
-                                        className="w-14 h-14 rounded-full border p-1"
-                                        source={{
-                                            uri: 'https://reactnative.dev/img/tiny_logo.png'
-                                        }}
-                                    />
-                                </View>
-                                <View className="bg-[#64748B]  rounded-xl px-1 py-0.5 -mt-1">
-                                    <Text className="text-white">حميدا</Text>
-                                </View>
-                            </View>)}
-                        horizontal
-                    />
-                </View>
-                <View className="flex flex-row mx-2 mb-3 justify-between items-center mt-6">
-                    <TouchableOpacity>
-                        <Text className="text-xl text-yellow-500">عرض الكل</Text>
-                    </TouchableOpacity>
-                    <Text className="text-xl">الدورات الاعلى تقييما</Text>
-                </View>
-                <View className="">
-
-                    <FlatList
-                        data={[...new Array(3).keys()]}
-                        renderItem={() => (
-                            <CourseVerticalCard/>
-                        )}
-
-                    />
-                </View>
-            </ScrollView>
+        <SafeAreaView className="flex-1 font-primary bg-gray-50">
+            <FlatList
+                ListHeaderComponent={() => (
+                    <>
+                        <HeaderComponent
+                            user="othman"
+                            onCartPress={() => console.log('Cart pressed')}
+                            onWalletPress={() => console.log('Wallet pressed')}
+                            onProfilePress={() => console.log('Profile pressed')}
+                            promotions={promotions}
+                        />
+                        <SectionHeader title="الفئات" onPress={() => console.log('View all categories')} />
+                        <FlatList
+                            data={categories}
+                            renderItem={({ item }) => <CategoryItem name={item} onPress={() => console.log(`Category ${item} pressed`)} />}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            className="mb-4"
+                        />
+                        <SectionHeader title="الدورات التدريبية المتميزة" onPress={() => console.log('View all featured courses')} />
+                        <FlatList
+                            data={featuredCourses}
+                            renderItem={({ item }) => <FeaturedCourseCard course={item} onPress={() => console.log(`Course ${item.id} pressed`)} />}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            className="mb-4"
+                        />
+                        <SectionHeader title="الاساتذة المتميزين" onPress={() => console.log('View all featured teachers')} />
+                        <FlatList
+                            data={teachers}
+                            renderItem={({ item }) => <TeacherItem teacher={item} onPress={() => console.log(`Teacher ${item.id} pressed`)} />}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            className="mb-4"
+                        />
+                        <SectionHeader title="الدورات الاعلى تقييما" onPress={() => console.log('View all top-rated courses')} />
+                    </>
+                )}
+                data={[...new Array(3).keys()]}
+                renderItem={() =>
+                    <CourseVerticalCard course={course} onPress={() => console.log('Course pressed')} />}
+                keyExtractor={(item) => item.toString()}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+            />
         </SafeAreaView>
     );
 }
