@@ -6,7 +6,7 @@ const CategoryItem = ({ name, onPress }) => (
   <TouchableOpacity onPress={onPress}>
     <View className="border flex flex-row gap-1 px-4 py-2 bg-white rounded-full m-2 shadow-md">
       <AntDesign name="appstore-o" size={20} color="#FFA500" />
-      <Text className="text-sm">{name}</Text>
+      <Text className="text-sm font-primary">{name}</Text>
     </View>
   </TouchableOpacity>
 );

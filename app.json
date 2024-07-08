@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -28,6 +28,9 @@
     },
     "plugins": [
       "expo-router"
+    ],
+    "fonts": [
+        "./assets/fonts/Cairo-Regular.ttf"
     ],
     "experiments": {
       "typedRoutes": true

@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, Image, FlatList, TouchableOpacity, Dimensions, RefreshControl } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AntDesign } from '@expo/vector-icons';
 import HeaderComponent from '../../components/HeaderItems';
 import CourseVerticalCard from '../../components/CourseVerticalCard';
 import SectionHeader from '../../components/SectionHeader'
@@ -46,7 +45,7 @@ export default function TabOneScreen() {
     }, []);
 
     return (
-        <SafeAreaView className="flex-1 font-primary bg-gray-50">
+        <SafeAreaView className="flex-1 bg-gray-50">
             <FlatList
                 ListHeaderComponent={() => (
                     <>

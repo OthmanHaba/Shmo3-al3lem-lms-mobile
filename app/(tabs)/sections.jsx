@@ -19,7 +19,7 @@ export default function Sections() {
         <TouchableOpacity>
           <AntDesign name="arrowleft" size={24} color="black" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold">التصنيفات</Text>
+        <Text className="text-xl font-primary">التصنيفات</Text>
         <TouchableOpacity>
           <AntDesign name="search1" size={24} color="black" />
         </TouchableOpacity>
@@ -37,7 +37,7 @@ export default function Sections() {
                 className="w-full h-32 mb-2" 
                 resizeMode="contain" 
               />
-              <Text className="text-center font-semibold">{category.title}</Text>
+              <Text className="text-center font-primary">{category.title}</Text>
             </TouchableOpacity>
           ))}
         </View>

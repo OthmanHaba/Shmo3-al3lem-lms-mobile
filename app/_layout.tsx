@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
-import { Alert } from 'react-native';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -36,7 +35,6 @@ export default function RootLayout() {
   }, [fontsLoaded, error]);
 
   if (!fontsLoaded) {
-    Alert.alert('not loaded')
     return null;
   }
 
