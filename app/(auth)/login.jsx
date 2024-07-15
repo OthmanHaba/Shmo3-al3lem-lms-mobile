@@ -1,9 +1,10 @@
-import { View, Image, Text, TouchableOpacity, ScrollView, Alert } from 'react-native'
-import { useState } from 'react'
+import {View, Image, Text, TouchableOpacity, ScrollView, Alert} from 'react-native'
+import {useState} from 'react'
 import FormField from '../../components/FormFeild'
-import { Link, router } from 'expo-router'
+import {Link, router} from 'expo-router'
 import AppLogo from '../../assets/images/Sign in illustartion.png'
-import { login } from '../../services/AuthService'
+import {loadUser, login} from '../../services/AuthService'
+
 const Login = () => {
 
     const [form, setForm] = useState({
@@ -12,21 +13,18 @@ const Login = () => {
     });
 
 
-
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (form.email === "" || form.password === "") {
             Alert.alert("Error", "من فضلك املأ كل الحقول");
             return;
         }
         try {
-            login({
+            await login({
                 username: form.username,
                 password: form.password
-            }).then(r =>
-                console.log(r)
-            );
-             // router.replace('(tabs)')
-
+            })
+            await loadUser();
+            router.replace('(tabs)');
         } catch (e) {
             console.log(e)
         }
@@ -48,23 +46,24 @@ const Login = () => {
                 <FormField
                     title="اسم المستخدم"
                     value={form.email}
-                    handleChangeText={(e) => setForm({ ...form, username: e })}
+                    handleChangeText={(e) => setForm({...form, username: e})}
                     otherStyles="mt-7"
                     placeholder={'ادخل اسم المستخدم'}
                     keyboardType="email-address"
 
                 />
                 <FormField
-                    title="passwordl"
+                    title="Password"
                     value={form.password}
-                    handleChangeText={(e) => setForm({ ...form, password: e })}
+                    handleChangeText={(e) => setForm({...form, password: e})}
                     otherStyles="mt-7"
                     placeholder={'كلمة المرور'}
                     keyboardType="password"
 
                 />
 
-                <TouchableOpacity onPress={handleSubmit} className="w-[80%] mt-8  bg-secondry rounded-full mx-auto px-4 py-2 items-center justify-center">
+                <TouchableOpacity onPress={handleSubmit}
+                                  className="w-[80%] mt-8  bg-secondry rounded-full mx-auto px-4 py-2 items-center justify-center">
                     <Text className="font-primary text-white">تسجيل الدخول</Text>
                 </TouchableOpacity>
                 <View className="items-center justify-center mt-2">

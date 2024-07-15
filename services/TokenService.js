@@ -13,11 +13,19 @@ export async function setToken(newToken) {
     }
 }
 
+export async function setUserId(id) {
+    await SecureStore.setItemAsync("userId", id);
+}
+
+export async function getUserId() {
+    return await SecureStore.getItemAsync("userId");
+}
+
 export async function getToken() {
     if (token !== null) {
         return token
     }
 
-    token = await SecureStore.getItemAsync("tokne");
+    token = await SecureStore.getItemAsync("token");
     return token
 }
