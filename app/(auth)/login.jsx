@@ -24,7 +24,7 @@ const Login = () => {
                 password: form.password
             })
             await loadUser();
-            router.replace('(tabs)');
+            // router.replace('(tabs)');
         } catch (e) {
             console.log(e)
         }

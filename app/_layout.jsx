@@ -1,57 +1,76 @@
-import {useFonts} from 'expo-font';
-import {router, Stack} from 'expo-router';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import {useEffect, useState} from 'react';
+import { useCallback, useEffect } from 'react';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import 'react-native-reanimated';
-import {loadUser} from '../services/AuthService';
 import AuthProvider from '../contexts/AuthContext';
+import { LoadingProvider, useLoading } from '../contexts/LoadingContext';
 
-export {
-    ErrorBoundary,
-} from 'expo-router';
+export { ErrorBoundary } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-    const [fontsLoaded, error] = useFonts({
-        "Cairo-Regular": require("../assets/fonts/Cairo-Regular.ttf"),
-    });
-    const [user, setUser] = useState(null)
+const FONTS = {
+    "Cairo-Regular": require("../assets/fonts/Cairo-Regular.ttf"),
+};
+
+function LoadingOverlay() {
+    const { isLoading } = useLoading();
+
+    if (!isLoading) return null;
+
+    return (
+        <View style={styles.overlay}>
+            <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+    );
+}
+
+function RootLayoutContent() {
+    const [fontsLoaded, fontError] = useFonts(FONTS);
+
     useEffect(() => {
-        if (error) throw error;
+        if (fontError) {
+            console.error('Font loading error:', fontError);
+        }
+    }, [fontError]);
+
+    const onLayoutRootView = useCallback(async () => {
         if (fontsLoaded) {
-            SplashScreen.hideAsync();
+            await SplashScreen.hideAsync();
         }
-
-        async function runEffect() {
-            try {
-                const user = await loadUser();
-                if (!user) return router.push('(auth)/login');
-                setUser(user);
-            } catch (e) {
-                // console.log(e);
-                return router.push('(auth)/login');
-            }
-        }
-
-        runEffect();
-    }, [fontsLoaded, error]);
+    }, [fontsLoaded]);
 
     if (!fontsLoaded) {
         return null;
     }
 
-    if (!fontsLoaded && !error) {
-        return null;
-    }
-
     return (
         <AuthProvider>
-            <Stack>
-                <Stack.Screen name="(auth)" options={{headerShown: false}}/>
-                <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+            <Stack onLayout={onLayoutRootView}>
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             </Stack>
+            <LoadingOverlay />
         </AuthProvider>
     );
 }
 
+export default function RootLayout() {
+    return (
+        <LoadingProvider>
+            <RootLayoutContent />
+        </LoadingProvider>
+    );
+}
+
+const styles = StyleSheet.create({
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
+    },
+});

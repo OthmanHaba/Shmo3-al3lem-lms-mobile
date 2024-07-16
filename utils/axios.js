@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {getToken} from '../services/TokenService'
 
-const API_BASE_URL = 'https://d673-216-128-0-43.ngrok-free.app/api/development';
+const API_BASE_URL = 'https://3266-216-128-0-43.ngrok-free.app/api/development';
 
 
 const axiosInstance = axios.create({
