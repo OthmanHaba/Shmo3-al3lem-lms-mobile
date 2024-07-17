@@ -1,11 +1,12 @@
 import React from 'react'
-import { Stack } from 'expo-router';
-import { useAuthContext } from '../../contexts/AuthContext';
+import {router, Stack} from 'expo-router';
+import {useAuthStore} from "../../stores/authStore";
 
 const AuthLayout = () => {
-    const { user } = useAuthContext();
+    const user = useAuthStore((state) => state.user);
 
-    if (user) return <Redirect href="(tabs)" />;
+    console.log(user);
+    if (user) return router.replace('(tabs)');
     return (
         <>
             <Stack>

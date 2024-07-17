@@ -9,32 +9,30 @@ import FeaturedCourseCard from '../../components/FeaturedCourseCard';
 import TeacherItem from '../../components/TeacherItem';
 import {loadUser} from "../../services/AuthService";
 import {useAuthStore} from "../../stores/authStore";
-import {router} from "expo-router";
-import {useLoading} from "../../contexts/LoadingContext";
+import {useRouter} from "expo-router";
+
 
 
 export default function TabOneScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const setUser = useAuthStore((state) => state.setUser);
     const user = useAuthStore((state) => state.user);
-    const [loading, setLoading] = useLoading();
+    const router = useRouter();
 
     useEffect(() => {
-        const fetchUser = async () => {
-            setLoading(true);
-            try {
-                await loadUser(setUser);
-            } catch (error) {
-                console.error('Failed to load user:', error);
-                router.replace('(auth)/login'); // Replace with your login route name
-            } finally {
-                setLoading(false);
-            }
-        };
+        // const fetchUser = async () => {
+        //     try {
+        //         await loadUser(setUser);
+        //     } catch (error) {
+        //         console.error('Failed to load user:', error);
+        //         await router.replace('(auth)/login'); // Replace with your login route name
+        //     }
+        // };
+        // fetchUser();
+        console.log('this is tabs')
+    }, []);
 
-        fetchUser();
-    }, [setUser]);
-    
+
     const course = {
         title: "رياضة 2- (نصفي)",
         author: "بواسطة محمد احمد",

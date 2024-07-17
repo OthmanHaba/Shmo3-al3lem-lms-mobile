@@ -14,22 +14,23 @@ export async function login(credentials) {
 
 
 export async function loadUser(setUser) {
-    try {
-        const id = await getUserId();
-        if (!id) {
-            console.warn('User ID not found');
-            throw new DOMException('User is null');
-        }
-
-        const response = await axiosInstance.get(`/users/${id}/profile`);
-        if (response.status === 200 && response.data && response.data.data) {
-            const user = response.data.data;
-            setUser(user); // Use the setUser function passed as a parameter
-        } else {
-            throw new Error('Invalid response data');
-        }
-    } catch (error) {
-        console.error('Error loading user profile:', error);
-        throw error;
-    }
+    // try {
+    //     const id = await getUserId();
+    //     if (!id) {
+    //         console.warn('User ID not found');
+    //         // throw new DOMException('User is null');
+    //         throw new Error('User is null');
+    //     }
+    //
+    //     const response = await axiosInstance.get(`/users/${id}/profile`);
+    //     if (response.status === 200 && response.data && response.data.data) {
+    //         const user = response.data.data;
+    //         setUser(user); // Use the setUser function passed as a parameter
+    //     } else {
+    //         throw new Error('Invalid response data');
+    //     }
+    // } catch (error) {
+    //     console.error('Error loading user profile:', error);
+    //     throw error;
+    // }
 }
