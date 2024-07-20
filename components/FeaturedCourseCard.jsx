@@ -7,17 +7,19 @@ import { AntDesign } from '@expo/vector-icons';
 const FeaturedCourseCard = ({ course, onPress }) => (
   <TouchableOpacity onPress={onPress}>
     <View className="p-4 mt-4 rounded-xl bg-white mx-2 shadow-md">
+      {/*course image*/}
       <Image
         className="w-full rounded-xl h-40"
-        source={{ uri: 'https://i.pravatar.cc/250?u=mail@ashallendesign.co.uk' }}
+        source={{ uri: course.image }}
       />
       <View className="flex flex-row justify-between -mt-4">
+        {/*teacher badge*/}
         <View className="flex flex-row items-center bg-white w-24 rounded-full px-1">
           <Image
             className="w-8 h-8 rounded-full mr-1"
             source={{ uri: 'https://i.pravatar.cc/250?u=mail@adhallendesign.co.uk' }}
           />
-          <Text className="text-xs font-primary">{course.user}</Text>
+          <Text className="text-xs font-primary">{course.teacher.full_name}</Text>
         </View>
         <View className="bg-red-500 px-3 py-1 flex justify-center items-center rounded-full">
           <Text className="text-xs font-primary text-white font-bold">{course.price} دل</Text>

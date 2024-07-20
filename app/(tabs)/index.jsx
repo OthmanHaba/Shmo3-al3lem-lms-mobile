@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {FlatList, RefreshControl} from 'react-native';
+import {ActivityIndicator, FlatList, RefreshControl} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import HeaderComponent from '../../components/HeaderItems';
 import CourseVerticalCard from '../../components/CourseVerticalCard';
@@ -7,107 +7,91 @@ import SectionHeader from '../../components/SectionHeader'
 import CategoryItem from '../../components/CategoryItem';
 import FeaturedCourseCard from '../../components/FeaturedCourseCard';
 import TeacherItem from '../../components/TeacherItem';
-import {loadUser} from "../../services/AuthService";
+import {Redirect} from "expo-router";
 import {useAuthStore} from "../../stores/authStore";
-import {useRouter} from "expo-router";
+import {getAdvertisingPanles, getCategories, getFeaturedCourses, getInstructors} from "../../services/HomeService";
+import useDataStore from "../../stores/homeStore";
+import {loadUser} from "../../services/AuthService";
 
-
-
-export default function TabOneScreen() {
+export default function Home() {
     const [refreshing, setRefreshing] = useState(false);
-    const setUser = useAuthStore((state) => state.setUser);
-    const user = useAuthStore((state) => state.user);
-    const router = useRouter();
+    const [loading, setLoading] = useState(true);
+
+    const {user, setUser, checkAuth, token, isLoading} = useAuthStore();
+    const {
+        advertisements, setAdvertisements,
+        featherCategories: categories,
+        setFeatherCategories: setCategories,
+        featuredCourses, setFeaturedCourses,
+        instructors, setInstructors,
+    } = useDataStore();
+
+
+    const fetchData = useCallback(async () => {
+        try {
+            const [advertisingData, categoriesData, featuredCoursesData, instuctorsData] = await Promise.all([
+                getAdvertisingPanles(),
+                getCategories(),
+                getFeaturedCourses(),
+                getInstructors(),
+            ]);
+
+            setAdvertisements(advertisingData.advertising_banners);
+            setCategories(categoriesData.categories);
+            setFeaturedCourses(featuredCoursesData);
+            setInstructors(instuctorsData.users)
+        } catch (error) {
+            console.error('Failed to fetch data', error);
+        }
+    }, [setAdvertisements, setCategories, setFeaturedCourses]);
+
+    const fetchUserInfo = useCallback(async () => {
+        try {
+            await checkAuth();
+            console.log('asdf')
+            const response = await loadUser();
+            setUser(response.user);
+            await fetchData();
+        } catch (error) {
+            console.error('Failed to fetch user info', error);
+        } finally {
+            setLoading(false);
+        }
+    }, [checkAuth, setUser, fetchData]);
 
     useEffect(() => {
-        // const fetchUser = async () => {
-        //     try {
-        //         await loadUser(setUser);
-        //     } catch (error) {
-        //         console.error('Failed to load user:', error);
-        //         await router.replace('(auth)/login'); // Replace with your login route name
-        //     }
-        // };
-        // fetchUser();
-        console.log('this is tabs')
-    }, []);
-
-
-    const course = {
-        title: "رياضة 2- (نصفي)",
-        author: "بواسطة محمد احمد",
-        rating: "4.6",
-        duration: "4 ساعات و 30 دقيقة",
-        price: "24",
-        image: "https://example.com/course-image.jpg"
-    };
-
-    const promotions = [
-        {id: 1, image: "https://example.com/promotion1.jpg"},
-        {id: 2, image: "https://example.com/promotion2.jpg"},
-    ];
-
-    const categories = ['الرياضيات', 'العلوم', 'اللغة العربية', 'التاريخ', 'الجغرافيا'];
-    const featuredCourses = [
-        {
-            id: 1,
-            title: 'الرياضيات المتقدمة',
-            user: 'د. أحمد',
-            userImage: 'https://example.com/user1.jpg',
-            price: 99,
-            rating: 4.5,
-            duration: '٥ ساعات',
-            image: 'https://example.com/math.jpg'
-        },
-        {
-            id: 2,
-            title: 'الفيزياء الحديثة',
-            user: 'د. سارة',
-            userImage: 'https://example.com/user2.jpg',
-            price: 89,
-            rating: 4.2,
-            duration: '٤ ساعات',
-            image: 'https://example.com/physics.jpg'
-        },
-        {
-            id: 3,
-            title: 'الأدب العربي',
-            user: 'أ. محمد',
-            userImage: 'https://example.com/user3.jpg',
-            price: 79,
-            rating: 4.7,
-            duration: '٦ ساعات',
-            image: 'https://example.com/literature.jpg'
-        },
-    ];
-    const teachers = [
-        {id: 1, name: 'د. حميدا', image: 'https://example.com/teacher1.jpg'},
-        {id: 2, name: 'أ. محمد', image: 'https://example.com/teacher2.jpg'},
-        {id: 3, name: 'د. فاطمة', image: 'https://example.com/teacher3.jpg'},
-    ];
+        fetchUserInfo();
+    }, [fetchUserInfo]);
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
-        // Fetch data on here
-        setTimeout(() => setRefreshing(false), 2000);
-    }, []);
+        fetchData().finally(() => setRefreshing(false));
+    }, [fetchData]);
 
+    if (!token) {
+        return <Redirect href="/login"/>;
+    }
+
+    if (loading || isLoading) {
+        return <ActivityIndicator size={24} style={{flex: 1}}/>;
+    }
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
             <FlatList
                 ListHeaderComponent={() => (
                     <>
                         <HeaderComponent
-                            user="othman"
+                            user={user}
                             onCartPress={() => console.log('Cart pressed')}
                             onWalletPress={() => console.log('Wallet pressed')}
                             onProfilePress={() => console.log('Profile pressed')}
-                            promotions={promotions}
+                            promotions={advertisements}
                         />
                         <SectionHeader title="الفئات" onPress={() => console.log('View all categories')}/>
                         <FlatList
                             data={categories}
-                            renderItem={({item}) => <CategoryItem name={item}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({item}) => <CategoryItem name={item.title} iconUri={item.icon}
                                                                   onPress={() => console.log(`Category ${item} pressed`)}/>}
                             horizontal
                             showsHorizontalScrollIndicator={false}
@@ -117,8 +101,11 @@ export default function TabOneScreen() {
                                        onPress={() => console.log('View all featured courses')}/>
                         <FlatList
                             data={featuredCourses}
-                            renderItem={({item}) => <FeaturedCourseCard course={item}
-                                                                        onPress={() => console.log(`Course ${item.id} pressed`)}/>}
+                            renderItem={({item}) =>
+                                <FeaturedCourseCard
+                                    course={item}
+                                    onPress={() => console.log(`Course ${item.id} pressed`)}/>
+                            }
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             className="mb-4"
@@ -126,7 +113,7 @@ export default function TabOneScreen() {
                         <SectionHeader title="الاساتذة المتميزين"
                                        onPress={() => console.log('View all featured teachers')}/>
                         <FlatList
-                            data={teachers}
+                            data={instructors}
                             renderItem={({item}) => <TeacherItem teacher={item}
                                                                  onPress={() => console.log(`Teacher ${item.id} pressed`)}/>}
                             horizontal
@@ -137,10 +124,9 @@ export default function TabOneScreen() {
                                        onPress={() => console.log('View all top-rated courses')}/>
                     </>
                 )}
-                data={[...new Array(3).keys()]}
-                renderItem={() =>
-                    <CourseVerticalCard course={course} onPress={() => console.log('Course pressed')}/>}
-                keyExtractor={(item) => item.toString()}
+                data={featuredCourses}
+                renderItem={(item) =>
+                    <CourseVerticalCard course={item.item} onPress={() => console.log('Course pressed')}/>}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
                 }

@@ -1,11 +1,8 @@
 import {useFonts} from 'expo-font';
 import {Stack} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import {useCallback, useEffect} from 'react';
-import {View, ActivityIndicator, StyleSheet, Text} from 'react-native';
+import {useEffect} from 'react';
 import 'react-native-reanimated';
-import AuthProvider from '../contexts/AuthContext';
-import {LoadingProvider, useLoading} from '../contexts/LoadingContext';
 
 export {ErrorBoundary} from 'expo-router';
 
@@ -22,13 +19,10 @@ export default function RootLayout() {
         if (fontError) {
             console.error('Font loading error:', fontError);
         }
-    }, [fontError]);
-
-    const onLayoutRootView = useCallback(async () => {
         if (fontsLoaded) {
-            await SplashScreen.hideAsync();
+            SplashScreen.hideAsync();
         }
-    }, [fontsLoaded]);
+    }, [fontError,fontsLoaded]);
 
     if (!fontsLoaded) {
         return null;
@@ -36,8 +30,8 @@ export default function RootLayout() {
 
     return (
         <Stack>
-            <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
             <Stack.Screen name="(auth)" options={{headerShown: false}}/>
+            <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
         </Stack>
     );
 }

@@ -1,9 +1,10 @@
 import {View, Image, Text, TouchableOpacity, ScrollView, Alert} from 'react-native'
 import {useState} from 'react'
 import FormField from '../../components/FormFeild'
-import {Link, router} from 'expo-router'
+import {Link,Redirect} from 'expo-router'
 import AppLogo from '../../assets/images/Sign in illustartion.png'
 import {loadUser, login} from '../../services/AuthService'
+import {useAuthStore} from "../../stores/authStore";
 
 const Login = () => {
 
@@ -12,6 +13,11 @@ const Login = () => {
         password: "",
     });
 
+    console.log('login page');
+    const user = useAuthStore(state => state.user);
+    const setUser = useAuthStore(state => state.setUser);
+    // if(user) return <Redirect href={'(tabs)'}/>
+    console.log(user);
 
     const handleSubmit = async () => {
         if (form.email === "" || form.password === "") {
@@ -23,8 +29,9 @@ const Login = () => {
                 username: form.username,
                 password: form.password
             })
-            await loadUser();
-            // router.replace('(tabs)');
+            const data = await loadUser();
+            console.log(data.user);
+            setUser(data.user);
         } catch (e) {
             console.log(e)
         }
