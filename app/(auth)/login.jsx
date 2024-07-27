@@ -13,11 +13,7 @@ const Login = () => {
         password: "",
     });
 
-    console.log('login page');
-    const user = useAuthStore(state => state.user);
     const setUser = useAuthStore(state => state.setUser);
-    // if(user) return <Redirect href={'(tabs)'}/>
-    console.log(user);
 
     const handleSubmit = async () => {
         if (form.email === "" || form.password === "") {

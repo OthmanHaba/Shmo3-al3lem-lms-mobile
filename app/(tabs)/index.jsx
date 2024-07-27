@@ -7,7 +7,7 @@ import SectionHeader from '../../components/SectionHeader'
 import CategoryItem from '../../components/CategoryItem';
 import FeaturedCourseCard from '../../components/FeaturedCourseCard';
 import TeacherItem from '../../components/TeacherItem';
-import {Redirect} from "expo-router";
+import {Redirect, useRouter} from "expo-router";
 import {useAuthStore} from "../../stores/authStore";
 import {getAdvertisingPanles, getCategories, getFeaturedCourses, getInstructors} from "../../services/HomeService";
 import useDataStore from "../../stores/homeStore";
@@ -17,6 +17,7 @@ export default function Home() {
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(true);
 
+    const router = useRouter();
     const {user, setUser, checkAuth, token, isLoading} = useAuthStore();
     const {
         advertisements, setAdvertisements,
@@ -104,7 +105,9 @@ export default function Home() {
                             renderItem={({item}) =>
                                 <FeaturedCourseCard
                                     course={item}
-                                    onPress={() => console.log(`Course ${item.id} pressed`)}/>
+                                    onPress={() => {
+                                        router.push(`/course/${item.id}`)
+                                    }}/>
                             }
                             horizontal
                             showsHorizontalScrollIndicator={false}

@@ -32,6 +32,8 @@ export default function RootLayout() {
         <Stack>
             <Stack.Screen name="(auth)" options={{headerShown: false}}/>
             <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+            <Stack.Screen name="wallet" options={{headerShown: false}}/>
+            <Stack.Screen name="course/[id]" options={{headerShown: false}}/>
         </Stack>
     );
 }

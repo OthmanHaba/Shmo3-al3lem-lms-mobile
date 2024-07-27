@@ -5,7 +5,7 @@ import {useAuthStore} from "../../stores/authStore";
 const AuthLayout = () => {
 
     const user = useAuthStore(state => state.user);
-
+    console.log(user);
     if (Object.keys(user).length !== 0) return <Redirect href={'(tabs)'}/>
     return (
         <>
