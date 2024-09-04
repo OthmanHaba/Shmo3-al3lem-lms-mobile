@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { FlatList, RefreshControl } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { ActivityIndicator, FlatList, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HeaderComponent from '../../components/HeaderItems';
 import CourseVerticalCard from '../../components/CourseVerticalCard';
@@ -7,89 +7,112 @@ import SectionHeader from '../../components/SectionHeader'
 import CategoryItem from '../../components/CategoryItem';
 import FeaturedCourseCard from '../../components/FeaturedCourseCard';
 import TeacherItem from '../../components/TeacherItem';
+import { Redirect, useRouter } from "expo-router";
+import { useAuthStore } from "../../stores/authStore";
+import { getAdvertisingPanles, getCategories, getFeaturedCourses, getInstructors } from "../../services/HomeService";
+import useDataStore from "../../stores/homeStore";
+// import { loadUser } from "../../services/AuthService";
 
-
-
-export default function TabOneScreen() {
+export default function Home() {
     const [refreshing, setRefreshing] = useState(false);
-    const course = {
-        title: "رياضة 2- (نصفي)",
-        author: "بواسطة محمد احمد",
-        rating: "4.6",
-        duration: "4 ساعات و 30 دقيقة",
-        price: "24",
-        image: "https://example.com/course-image.jpg"
-    };
-    
-    const promotions = [
-        { id: 1, image: "https://example.com/promotion1.jpg" },
-        { id: 2, image: "https://example.com/promotion2.jpg" },
-    ];
-    
-    const categories = ['الرياضيات', 'العلوم', 'اللغة العربية', 'التاريخ', 'الجغرافيا'];
-    const featuredCourses = [
-        { id: 1, title: 'الرياضيات المتقدمة', user: 'د. أحمد', userImage: 'https://example.com/user1.jpg', price: 99, rating: 4.5, duration: '٥ ساعات', image: 'https://example.com/math.jpg' },
-        { id: 2, title: 'الفيزياء الحديثة', user: 'د. سارة', userImage: 'https://example.com/user2.jpg', price: 89, rating: 4.2, duration: '٤ ساعات', image: 'https://example.com/physics.jpg' },
-        { id: 3, title: 'الأدب العربي', user: 'أ. محمد', userImage: 'https://example.com/user3.jpg', price: 79, rating: 4.7, duration: '٦ ساعات', image: 'https://example.com/literature.jpg' },
-    ];
-    const teachers = [
-        { id: 1, name: 'د. حميدا', image: 'https://example.com/teacher1.jpg' },
-        { id: 2, name: 'أ. محمد', image: 'https://example.com/teacher2.jpg' },
-        { id: 3, name: 'د. فاطمة', image: 'https://example.com/teacher3.jpg' },
-    ];
+    const [loading, setLoading] = useState(true);
+
+    const router = useRouter();
+    const { user } = useAuthStore();
+    const {
+        advertisements, setAdvertisements,
+        featherCategories: categories,
+        setFeatherCategories: setCategories,
+        featuredCourses, setFeaturedCourses,
+        instructors, setInstructors,
+    } = useDataStore();
+
+
+    const fetchData = useCallback(async () => {
+        try {
+            const [advertisingData/*, categoriesData, featuredCoursesData, instuctorsData*/] = await Promise.all([
+                getAdvertisingPanles(),
+                // getCategories(),
+                // getFeaturedCourses(),
+                // getInstructors(),
+            ]);
+
+            console.log(advertisingData);
+            setAdvertisements(advertisingData);
+            // setCategories(categoriesData.categories);
+            // setFeaturedCourses(featuredCoursesData);
+            // setInstructors(instuctorsData.users)
+        } catch (error) {
+            console.error('Failed to fetch data', error);
+        }
+    }, [setAdvertisements, setCategories, setFeaturedCourses]);
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
-        // Fetch data on here
-        setTimeout(() => setRefreshing(false), 2000);
-    }, []);
-
+        fetchData().finally(() => setRefreshing(false));
+    }, [fetchData]);
+    //
+    // if (loading || isLoading) {
+    //     return <ActivityIndicator size={24} style={{ flex: 1 }} />;
+    // }
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
             <FlatList
                 ListHeaderComponent={() => (
                     <>
                         <HeaderComponent
-                            user="othman"
-                            onCartPress={() => console.log('Cart pressed')}
+                            user={user}
+                            onCartPress={() => router.push('/cart')}
                             onWalletPress={() => console.log('Wallet pressed')}
                             onProfilePress={() => console.log('Profile pressed')}
-                            promotions={promotions}
+                            promotions={advertisements}
                         />
-                        <SectionHeader title="الفئات" onPress={() => console.log('View all categories')} />
-                        <FlatList
-                            data={categories}
-                            renderItem={({ item }) => <CategoryItem name={item} onPress={() => console.log(`Category ${item} pressed`)} />}
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            className="mb-4"
-                        />
-                        <SectionHeader title="الدورات التدريبية المتميزة" onPress={() => console.log('View all featured courses')} />
-                        <FlatList
-                            data={featuredCourses}
-                            renderItem={({ item }) => <FeaturedCourseCard course={item} onPress={() => console.log(`Course ${item.id} pressed`)} />}
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            className="mb-4"
-                        />
-                        <SectionHeader title="الاساتذة المتميزين" onPress={() => console.log('View all featured teachers')} />
-                        <FlatList
-                            data={teachers}
-                            renderItem={({ item }) => <TeacherItem teacher={item} onPress={() => console.log(`Teacher ${item.id} pressed`)} />}
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            className="mb-4"
-                        />
-                        <SectionHeader title="الدورات الاعلى تقييما" onPress={() => console.log('View all top-rated courses')} />
+                        {/*<SectionHeader title="الفئات" onPress={() => router.push('/sections')} />*/}
+                        {/*<FlatList*/}
+                        {/*    data={categories}*/}
+                        {/*    keyExtractor={(item) => item.id}*/}
+                        {/*    renderItem={({ item }) => <CategoryItem name={item.title} iconUri={item.icon}*/}
+                        {/*        onPress={() => console.log(`Category ${item} pressed`)} />}*/}
+                        {/*    horizontal*/}
+                        {/*    showsHorizontalScrollIndicator={false}*/}
+                        {/*    className="mb-4"*/}
+                        {/*/>*/}
+                        {/*<SectionHeader title="الدورات التدريبية المتميزة"*/}
+                        {/*    onPress={() => router.push('/all')} />*/}
+                        {/*<FlatList*/}
+                        {/*    data={featuredCourses}*/}
+                        {/*    renderItem={({ item }) =>*/}
+                        {/*        <FeaturedCourseCard*/}
+                        {/*            course={item}*/}
+                        {/*            onPress={() => {*/}
+                        {/*                router.push(`/course/${item.id}`)*/}
+                        {/*            }} />*/}
+                        {/*    }*/}
+                        {/*    horizontal*/}
+                        {/*    showsHorizontalScrollIndicator={false}*/}
+                        {/*    className="mb-4"*/}
+                        {/*/>*/}
+                        {/*<SectionHeader title="الاساتذة المتميزين"*/}
+                        {/*    onPress={() => console.log('View all featured teachers')} />*/}
+                        {/*<FlatList*/}
+                        {/*    data={instructors}*/}
+                        {/*    renderItem={({ item }) => <TeacherItem teacher={item}*/}
+                        {/*        onPress={() => console.log(`Teacher ${item.id} pressed`)} />}*/}
+                        {/*    horizontal*/}
+                        {/*    showsHorizontalScrollIndicator={false}*/}
+                        {/*    className="mb-4"*/}
+                        {/*/>*/}
+                        {/*<SectionHeader title="الدورات الاعلى تقييما"*/}
+                        {/*    onPress={() => console.log('View all top-rated courses')} />*/}
                     </>
                 )}
-                data={[...new Array(3).keys()]}
-                renderItem={() =>
-                    <CourseVerticalCard course={course} onPress={() => console.log('Course pressed')} />}
-                keyExtractor={(item) => item.toString()}
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                }
+                // data={featuredCourses}
+                data={[]}
+                renderItem={(item) => <Text>sdf</Text>}
+                    // <CourseVerticalCard course={item.item} onPress={() => console.log('Course pressed')} />}
+                // refreshControl={
+                //     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                // }
             />
         </SafeAreaView>
     );

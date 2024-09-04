@@ -2,17 +2,13 @@ import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
-
-const categories = [
-  { id: 1, title: 'شهادة ثانوية', image: 'https://via.placeholder.com/150' },
-  { id: 2, title: 'شهادة اعدادية', image: 'https://via.placeholder.com/150' },
-  { id: 3, title: 'علوم تطبيقية', image: 'https://via.placeholder.com/150' },
-  { id: 4, title: 'هندسة', image: 'https://via.placeholder.com/150' },
-  { id: 5, title: 'تقنية معلومات', image: 'https://via.placeholder.com/150' },
-  { id: 6, title: 'طب بشري', image: 'https://via.placeholder.com/150' },
-];
+import useDataStore from "../../stores/homeStore";
 
 export default function Sections() {
+
+  const {featherCategories} = useDataStore();
+
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-row justify-between items-center p-4">
@@ -27,13 +23,14 @@ export default function Sections() {
       
       <ScrollView className="flex-1 p-4">
         <View className="flex-row flex-wrap justify-between">
-          {categories.map((category) => (
+          {featherCategories.map((category) => (
             <TouchableOpacity
+                onPress={() => console.log('category', category.id)}
               key={category.id}
               className="w-[48%] bg-gray-100 rounded-lg p-4 mb-4"
             >
               <Image 
-                source={{ uri: category.image }} 
+                source={{ uri: category.icon }}
                 className="w-full h-32 mb-2" 
                 resizeMode="contain" 
               />

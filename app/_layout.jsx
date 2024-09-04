@@ -1,57 +1,44 @@
-import {useFonts} from 'expo-font';
-import {router, Stack} from 'expo-router';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import {useEffect, useState} from 'react';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
-import {loadUser} from '../services/AuthService';
-import AuthProvider from '../contexts/AuthContext';
 
-export {
-    ErrorBoundary,
-} from 'expo-router';
+export { ErrorBoundary } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
+const FONTS = {
+    "Cairo-Regular": require("../assets/fonts/Cairo-Regular.ttf"),
+};
+
 export default function RootLayout() {
-    const [fontsLoaded, error] = useFonts({
-        "Cairo-Regular": require("../assets/fonts/Cairo-Regular.ttf"),
-    });
-    const [user, setUser] = useState(null)
+    const [fontsLoaded, fontError] = useFonts(FONTS);
+
     useEffect(() => {
-        if (error) throw error;
+        if (fontError) {
+            console.error('Font loading error:', fontError);
+        }
         if (fontsLoaded) {
             SplashScreen.hideAsync();
         }
-
-        async function runEffect() {
-            try {
-                const user = await loadUser();
-                if (!user) return router.push('(auth)/login');
-                setUser(user);
-            } catch (e) {
-                // console.log(e);
-                return router.push('(auth)/login');
-            }
-        }
-
-        runEffect();
-    }, [fontsLoaded, error]);
+    }, [fontError, fontsLoaded]);
 
     if (!fontsLoaded) {
         return null;
     }
 
-    if (!fontsLoaded && !error) {
-        return null;
-    }
-
     return (
-        <AuthProvider>
-            <Stack>
-                <Stack.Screen name="(auth)" options={{headerShown: false}}/>
-                <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-            </Stack>
-        </AuthProvider>
+        <Stack>
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="wallet" options={{ headerShown: false }} />
+            <Stack.Screen name="course/[id]" options={{ headerShown: false }} />
+            <Stack.Screen name="all" options={{ headerShown: false }} />
+            <Stack.Screen name="cart/index" options={{ headerShown: false }} />
+            <Stack.Screen name="walletTopUp" options={{ headerShown: false }} />
+            <Stack.Screen name="course/playableCourses/[id]" options={{ headerShown: false }} />
+            <Stack.Screen name="course/playableCourses/vedio/[fileID]" options={{ headerShown: false }} />
+        </Stack>
     );
 }
-
