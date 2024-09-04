@@ -10,8 +10,8 @@ export const useAuthStore = create((set) => ({
     token: null,
     isLoading: true,
     signIn: async (credentials) => {
-        await axiosInstance.post('/login', credentials).then(res => {
-            setToken(res.data.data);
+        await axiosInstance.post('client/login', credentials).then(res => {
+            setToken(res.data.token);
             set({ token: res.data.data, isLoading: false });
         }).catch(e => {
             console.log('error', e);

@@ -3,16 +3,15 @@ import * as SecureStore from "expo-secure-store"
 let token = null;
 let userId = null;
 
-export async function setToken(data) {
-    token = data.token;
-    userId = data.user_id;
+export async function setToken(token) {
+    // token = data.token;
+    // userId = data.user_id;
 
     if (token !== null) {
         await SecureStore.setItemAsync("token", token);
-        await SecureStore.setItemAsync("userId", userId.toString());
+        // await SecureStore.setItemAsync("userId", userId.toString());
     } else {
         await SecureStore.deleteItemAsync("token");
-        await SecureStore.deleteItemAsync("userId");
     }
 }
 

@@ -1,12 +1,24 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {Redirect, Stack} from 'expo-router';
 import {useAuthStore} from "../../stores/authStore";
+import AuthService from "../../services/AuthService";
+import {useExpoRouter} from "expo-router/build/global-state/router-store";
 
 const AuthLayout = () => {
 
-    const user = useAuthStore(state => state.user);
-    console.log(user);
-    if (Object.keys(user).length !== 0) return <Redirect href={'(tabs)'}/>
+    const {user, setUser} = useAuthStore();
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const data = await AuthService.getUser();
+            if (data.user) {
+                setUser(user);
+                return <Redirect href="/(tabs)/"/>
+            }
+        }
+        checkUser();
+
+    }, []);
     return (
         <>
             <Stack>

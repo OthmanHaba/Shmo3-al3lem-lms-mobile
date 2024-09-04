@@ -1,10 +1,10 @@
-import {useFonts} from 'expo-font';
-import {Stack} from 'expo-router';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 
-export {ErrorBoundary} from 'expo-router';
+export { ErrorBoundary } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -22,7 +22,7 @@ export default function RootLayout() {
         if (fontsLoaded) {
             SplashScreen.hideAsync();
         }
-    }, [fontError,fontsLoaded]);
+    }, [fontError, fontsLoaded]);
 
     if (!fontsLoaded) {
         return null;
@@ -30,11 +30,15 @@ export default function RootLayout() {
 
     return (
         <Stack>
-            <Stack.Screen name="(auth)" options={{headerShown: false}}/>
-            <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-            <Stack.Screen name="wallet" options={{headerShown: false}}/>
-            <Stack.Screen name="course/[id]" options={{headerShown: false}}/>
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="wallet" options={{ headerShown: false }} />
+            <Stack.Screen name="course/[id]" options={{ headerShown: false }} />
+            <Stack.Screen name="all" options={{ headerShown: false }} />
+            <Stack.Screen name="cart/index" options={{ headerShown: false }} />
+            <Stack.Screen name="walletTopUp" options={{ headerShown: false }} />
+            <Stack.Screen name="course/playableCourses/[id]" options={{ headerShown: false }} />
+            <Stack.Screen name="course/playableCourses/vedio/[fileID]" options={{ headerShown: false }} />
         </Stack>
     );
 }
-

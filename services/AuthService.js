@@ -1,33 +1,48 @@
 import axiosInstance from "../utils/axios";
-import {getUserId, setToken} from "./TokenService"
+import { getUserId, setToken } from "./TokenService";
+import categoryItem from "../components/CategoryItem";
 
-export async function login(credentials) {
-    await axiosInstance.post('/login', credentials).then(res => {
-        setToken(res.data.data);
-    }).catch(e => {
-        console.log('error', e);
-        throw e;
-    });
-}
-
-
-export async function loadUser() {
-    try {
-        const id = await getUserId();
-        if (!id) {
-            console.warn('User ID not found');
-            throw new Error('User is null');
+class AuthService {
+    async login(credentials) {
+        try {
+            const response = await axiosInstance.post('/client/login', credentials);
+            const token = response.data.token;
+            await setToken(token);
+        } catch (error) {
+            console.error('Login error:', error);
+            throw error;
         }
+    }
 
-        const response = await axiosInstance.get('/panel/profile-setting');
-
-        if (response.status === 200 && response.data && response.data.data) {
-            return response.data.data;
-        } else {
-            throw new Error('Invalid response data');
+    async getUser() {
+        try {
+            const response = await axiosInstance.get('client/user');
+            return response.data;
+        }catch (error) {
+            console.error('Error fetching user:', error);
+            throw error;
         }
-    } catch (error) {
-        console.error('Error loading user profile:', error);
-        throw error;
+    }
+
+    async register(credentials) {
+        try {
+            const response = await axiosInstance.post('/register/step/1', credentials);
+            return response.data;
+        } catch (error) {
+            console.error('Error registering user:', error);
+            throw error;
+        }
+    }
+
+    async confirmOTP(data) {
+        try {
+            const response = await axiosInstance.post('/register/step/2', data);
+            return response.data;
+        } catch (error) {
+            console.error('Error confirming OTP:', error);
+            throw error;
+        }
     }
 }
+
+export default new AuthService();

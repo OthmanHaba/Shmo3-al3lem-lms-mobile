@@ -43,13 +43,6 @@ export default function Wallet() {
     }, []);
 
     // Mock data for transactions
-    const transactions = [
-        { id: '1', type: 'income', amount: '500', date: '2023-07-20' },
-        { id: '2', type: 'expense', amount: '200', date: '2023-07-19' },
-        { id: '3', type: 'income', amount: '1000', date: '2023-07-18' },
-        { id: '4', type: 'expense', amount: '150', date: '2023-07-17' },
-    ];
-
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
             <View className="flex-row justify-between items-center p-4 bg-white border-b border-gray-200">
@@ -67,7 +60,7 @@ export default function Wallet() {
                     <Text className="text-white font-primary text-lg mb-2">الرصيد الحالي</Text>
                     <Text className="text-white  text-4xl font-bold mb-4">{balance} دينار</Text>
                     <View className="flex-row justify-between">
-                        <TouchableOpacity className="bg-white py-2 px-4 rounded-full">
+                        <TouchableOpacity onPress={() => router.push('/walletTopUp')} className="bg-white py-2 px-4 rounded-full">
                             <Text className="font-primary text-primary">إضافة رصيد</Text>
                         </TouchableOpacity>
                     </View>

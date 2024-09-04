@@ -1,8 +1,8 @@
 import axiosInstance from "../utils/axios";
 
 export async function getAdvertisingPanles() {
-    return axiosInstance.get('/advertising-banner').then(res => {
-        return res.data.data;
+    return axiosInstance.get('/filament/advertisements').then(res => {
+        return res.data;
     })
 }
 
